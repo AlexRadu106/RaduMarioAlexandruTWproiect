@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FleetManager - Mockup</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>FleetManager</h1>
+    <p>Gestiunea flotei auto, disponibilitate și categorii de vehicule.</p>
+    <p class="app-count">3 vehicule, dintre care 2 disponibile</p>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Adaugă vehicul</h2>
+      <form class="item-form">
+        <label>
+          Model vehicul
+          <input type="text" name="model" placeholder="Ex: Skoda Octavia 2.0 TDI" />
+        </label>
+        <label>
+          Segment
+          <select name="segment">
+            <option value="economic">Economic</option>
+            <option value="suv">SUV</option>
+            <option value="premium">Premium</option>
+          </select>
+        </label>
+        <button type="submit">Adaugă</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Vehicule în flotă</h2>
+      <!-- Când lista e goală: <p class="empty">Nu există niciun vehicul înregistrat.</p> -->
+      <ul class="item-list">
+        <li class="item-card">
+          <div>
+            <h3>Dacia Duster 1.5 dCi</h3>
+            <span class="badge badge-suv">SUV</span>
+          </div>
+          <span class="status">Disponibil</span>
+        </li>
+        <li class="item-card done">
+          <div>
+            <h3>Volkswagen Golf 8 2.0 TDI</h3>
+            <span class="badge badge-economic">Economic</span>
+          </div>
+          <span class="status">Închiriat</span>
+        </li>
+        <li class="item-card">
+          <div>
+            <h3>Audi A6 40 TDI Quattro</h3>
+            <span class="badge badge-premium">Premium</span>
+          </div>
+          <span class="status">Disponibil</span>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="app-footer">Proiect Tehnologii Web</footer>
+
+  <!-- Scriptul pentru Etapa 2 -->
+  <script src="masini.js"></script>
+</body>
+</html>
