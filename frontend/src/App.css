@@ -6,22 +6,19 @@
   --bg: #f8fafc;
   --card: #ffffff;
   --text: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --accent: #0f766e;
-  --accent-soft: #f0fdfa;
-  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07);
+  --muted: #94a3b8;
+  --border: #334155;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #090d16;
+    --bg: #0b1120;
     --card: #111827;
     --text: #f8fafc;
     --muted: #94a3b8;
-    --border: #1f2937;
-    --accent: #14b8a6;
-    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --border: #1e293b;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -33,28 +30,45 @@ body {
   line-height: 1.5;
 }
 
+/* Antet aplicatie cu spatiu flexibil pentru titlu, logo si contor */
 .app-header {
   background: #0f172a;
   color: #ffffff;
-  padding: 24px 32px;
+  padding: 20px 32px;
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
 }
 
 .app-header h1 {
   margin: 0;
   font-size: 1.6rem;
   font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .app-header p:not(.app-count) {
   margin: 4px 0 0 0;
   color: #94a3b8;
   font-size: 0.9rem;
+}
+
+/* Logo pozitionat pe bara de sus */
+.header-banner {
+  height: 48px;
+  width: auto;
+  max-width: 260px;
+  object-fit: contain;
+  border-radius: 6px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+  transition: transform 0.2s ease;
+}
+
+.header-banner:hover {
+  transform: scale(1.03);
 }
 
 .app-header .app-count {
@@ -69,14 +83,11 @@ body {
   white-space: nowrap;
 }
 
-/* Etapa 3: o singura coloana (doar panoul cu date) */
+/* Layout container */
 .container {
-  max-width: 1000px;
-  margin: 32px auto;
+  max-width: 900px;
+  margin: 36px auto;
   padding: 0 20px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
 }
 
 .panel {
@@ -88,20 +99,104 @@ body {
 }
 
 .panel h2 {
-  margin: 0 0 18px 0;
-  font-size: 1.15rem;
+  margin: 0 0 20px 0;
+  font-size: 1.2rem;
   font-weight: 700;
   border-bottom: 1px solid var(--border);
   padding-bottom: 12px;
 }
 
-pre {
-  background: rgba(0, 0, 0, 0.03);
-  padding: 16px;
+/* Lista si cardurile randate din date */
+.item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-left: 5px solid #10b981;
   border-radius: 8px;
-  overflow-x: auto;
-  font-size: 0.875rem;
-  font-family: monospace;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.item-card:hover {
+  transform: translateX(4px);
+  background-color: #243047;
+}
+
+.item-card h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+/* Starea inchiriat / finalizat */
+.item-card.done {
+  border-left-color: #64748b;
+  opacity: 0.75;
+}
+
+.item-card.done h3 {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+/* Ecusoane (badge) segmente */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-economic {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.badge-suv {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.badge-premium {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.status {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.item-card.done .status {
+  color: #f87171;
+}
+
+/* Randare conditionata lista goala */
+.empty {
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+  padding: 24px;
 }
 
 .app-footer {
@@ -109,14 +204,25 @@ pre {
   padding: 24px;
   font-size: 0.85rem;
   color: var(--muted);
-  border-top: 1px solid var(--border);
   margin-top: 40px;
 }
 
-@media (max-width: 700px) {
+/* Responsivitate pentru ecrane mici */
+@media (max-width: 768px) {
   .app-header {
     flex-direction: column;
     align-items: flex-start;
     padding: 20px;
+  }
+
+  .header-banner {
+    order: 2;
+    height: 40px;
+    align-self: center;
+  }
+
+  .app-header .app-count {
+    order: 3;
+    align-self: flex-start;
   }
 }

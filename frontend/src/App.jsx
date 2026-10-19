@@ -1,3 +1,5 @@
+import MasinaList from "./components/MasinaList.jsx";
+
 const masini = [
   { id: 1, model: "Dacia Duster 1.5 dCi", disponibil: true, segment: "suv" },
   { id: 2, model: "Volkswagen Golf 8 2.0 TDI", disponibil: false, segment: "economic" },
@@ -14,6 +16,14 @@ export default function App() {
           <h1>FleetManager</h1>
           <p>Gestiunea flotei auto, disponibilitate și categorii de vehicule.</p>
         </div>
+
+        
+        <img 
+          src="/fleet-logo.jpg" 
+          alt="FleetManager Banner" 
+          className="header-banner" 
+        />
+
         <p className="app-count">
           {masini.length} vehicule, dintre care {disponibile} disponibile
         </p>
@@ -22,8 +32,7 @@ export default function App() {
       <main className="container">
         <section className="panel">
           <h2>Vehicule în flotă</h2>
-          {/* Temporar: date brute; componentele apar in Etapa 4 */}
-          <pre>{JSON.stringify(masini, null, 2)}</pre>
+          <MasinaList masini={masini} />
         </section>
       </main>
 
