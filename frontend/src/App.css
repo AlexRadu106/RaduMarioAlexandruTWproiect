@@ -6,20 +6,40 @@
   --bg: #f8fafc;
   --card: #ffffff;
   --text: #0f172a;
-  --muted: #94a3b8;
-  --border: #334155;
-  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #0f766e;
+  --accent-soft: #f0fdfa;
+  --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07);
+  --danger: #ef4444;
 }
 
+/* Tema sistemului, dacă utilizatorul nu a ales explicit tema luminoasă */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #0b1120;
     --card: #111827;
     --text: #f8fafc;
     --muted: #94a3b8;
     --border: #1e293b;
+    --accent: #14b8a6;
+    --accent-soft: #1e293b;
     --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    --danger: #f87171;
   }
+}
+
+/* Tema aleasă din buton are prioritate față de cea a sistemului */
+:root[data-theme="dark"] {
+  --bg: #0b1120;
+  --card: #111827;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: #1e293b;
+  --accent: #14b8a6;
+  --accent-soft: #1e293b;
+  --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --danger: #f87171;
 }
 
 body {
@@ -28,9 +48,10 @@ body {
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Antet aplicatie cu spatiu flexibil pentru titlu, logo si contor */
+/* Antet aplicatie cu aliniere flexibila */
 .app-header {
   background: #0f172a;
   color: #ffffff;
@@ -56,19 +77,41 @@ body {
   font-size: 0.9rem;
 }
 
-/* Logo pozitionat pe bara de sus */
 .header-banner {
   height: 48px;
   width: auto;
-  max-width: 260px;
+  max-width: 240px;
   object-fit: contain;
   border-radius: 6px;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
-  transition: transform 0.2s ease;
 }
 
-.header-banner:hover {
-  transform: scale(1.03);
+/* Container pentru butonul de tema si contorul de masini */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.theme-toggle {
+  position: static;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
 .app-header .app-count {
@@ -96,6 +139,7 @@ body {
   border-radius: 12px;
   padding: 24px;
   box-shadow: var(--card-shadow);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .panel h2 {
@@ -106,7 +150,7 @@ body {
   padding-bottom: 12px;
 }
 
-/* Lista si cardurile randate din date */
+/* Lista si cardurile randate */
 .item-list {
   list-style: none;
   padding: 0;
@@ -121,38 +165,74 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-left: 5px solid #10b981;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.15s ease, background-color 0.2s ease;
 }
 
 .item-card:hover {
   transform: translateX(4px);
-  background-color: #243047;
+  background-color: var(--accent-soft);
+}
+
+.item-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  flex-grow: 1;
+}
+
+.item-main input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .item-card h3 {
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #f8fafc;
 }
 
-/* Starea inchiriat / finalizat */
 .item-card.done {
-  border-left-color: #64748b;
+  border-left-color: var(--muted);
   opacity: 0.75;
 }
 
 .item-card.done h3 {
   text-decoration: line-through;
-  color: #94a3b8;
+  color: var(--muted);
 }
 
-/* Ecusoane (badge) segmente */
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-danger {
+  border: 1px solid var(--danger);
+  background: transparent;
+  color: var(--danger);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: #ffffff;
+}
+
 .badge {
   display: inline-block;
   padding: 3px 10px;
@@ -165,33 +245,32 @@ body {
 
 .badge-economic {
   background: rgba(16, 185, 129, 0.15);
-  color: #34d399;
+  color: #10b981;
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
 .badge-suv {
   background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  color: #f59e0b;
   border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 .badge-premium {
   background: rgba(168, 85, 247, 0.15);
-  color: #c084fc;
+  color: #a855f7;
   border: 1px solid rgba(168, 85, 247, 0.4);
 }
 
 .status {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--muted);
 }
 
 .item-card.done .status {
-  color: #f87171;
+  color: var(--danger);
 }
 
-/* Randare conditionata lista goala */
 .empty {
   color: var(--muted);
   font-style: italic;
@@ -207,7 +286,6 @@ body {
   margin-top: 40px;
 }
 
-/* Responsivitate pentru ecrane mici */
 @media (max-width: 768px) {
   .app-header {
     flex-direction: column;
@@ -215,14 +293,8 @@ body {
     padding: 20px;
   }
 
-  .header-banner {
-    order: 2;
-    height: 40px;
-    align-self: center;
-  }
-
-  .app-header .app-count {
-    order: 3;
-    align-self: flex-start;
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 }
