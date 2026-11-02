@@ -1,0 +1,9 @@
+{
+  "masini": [
+    { "id": 1, "model": "Dacia Duster 1.5 dCi", "disponibil": true, "segment": "suv" },
+    { "id": 2, "model": "Volkswagen Golf 8 2.0 TDI", "disponibil": false, "segment": "economic" },
+    { "id": 3, "model": "Audi A6 40 TDI Quattro", "disponibil": true, "segment": "premium" },
+    { "id": 4, "model": "Skoda Octavia 2.0 TDI", "disponibil": true, "segment": "economic" },
+    { "id": 5, "model": "BMW X5 3.0d", "disponibil": false, "segment": "suv" }
+  ]
+}

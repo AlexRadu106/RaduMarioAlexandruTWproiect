@@ -1,12 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MasinaList from "./components/MasinaList.jsx";
-
-// Datele inițiale ale temei
-const MASINI_INITIALE = [
-  { id: 1, model: "Dacia Duster 1.5 dCi", disponibil: true, segment: "suv" },
-  { id: 2, model: "Volkswagen Golf 8 2.0 TDI", disponibil: false, segment: "economic" },
-  { id: 3, model: "Audi A6 40 TDI Quattro", disponibil: true, segment: "premium" }
-];
+import { fetchMasini } from "./api.js";
 
 // Tema de pornire: detectată din setarea sistemului de operare
 function temaInitiala() {
@@ -14,29 +8,58 @@ function temaInitiala() {
 }
 
 export default function App() {
-  const [masini, setMasini] = useState(MASINI_INITIALE);
+  const [masini, setMasini] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [tema, setTema] = useState(temaInitiala);
 
-  // Actualizare imutabilă: comutare stare disponibil/închiriat
+  // Preluarea datelor de la API la montarea componentei
+  useEffect(() => {
+    let ignore = false;
+
+    async function load() {
+      try {
+        const data = await fetchMasini();
+        if (!ignore) {
+          setMasini(data);
+        }
+      } catch (err) {
+        if (!ignore) {
+          setError(err.message);
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
+      }
+    }
+
+    load();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  // Actualizare locală imutabilă (se va lega de API în Etapa 7)
   function handleToggle(id) {
     setMasini((prev) =>
       prev.map((m) => (m.id === id ? { ...m, disponibil: !m.disponibil } : m))
     );
   }
 
-  // Actualizare imutabilă: ștergere vehicul
   function handleDelete(id) {
     setMasini((prev) => prev.filter((m) => m.id !== id));
   }
 
-  // Comutare temă și aplicare pe <html>
+  // Comutare temă
   function handleTema() {
     const noua = tema === "dark" ? "light" : "dark";
     setTema(noua);
     document.documentElement.dataset.theme = noua;
   }
 
-  // Valoare derivată recalculată la fiecare randare
+  // Valoare derivată
   const disponibile = masini.filter((m) => m.disponibil).length;
 
   return (
@@ -71,11 +94,22 @@ export default function App() {
       <main className="container">
         <section className="panel">
           <h2>Vehicule în flotă</h2>
-          <MasinaList
-            masini={masini}
-            onToggle={handleToggle}
-            onDelete={handleDelete}
-          />
+
+          {loading && <p className="info">Se încarcă...</p>}
+          
+          {error && (
+            <p className="error">
+              Nu am putut încărca datele: {error}. Rulează <code>npm run api</code>?
+            </p>
+          )}
+
+          {!loading && !error && (
+            <MasinaList
+              masini={masini}
+              onToggle={handleToggle}
+              onDelete={handleDelete}
+            />
+          )}
         </section>
       </main>
 
