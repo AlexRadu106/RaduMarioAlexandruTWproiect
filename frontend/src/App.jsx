@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import MasinaList from "./components/MasinaList.jsx";
-import { fetchMasini } from "./api.js";
+import MasinaForm from "./components/MasinaForm.jsx";
+import { fetchMasini, createMasina, updateMasina, deleteMasina } from "./api.js";
 
 // Tema de pornire: detectată din setarea sistemului de operare
 function temaInitiala() {
@@ -41,15 +42,33 @@ export default function App() {
     };
   }, []);
 
-  // Actualizare locală imutabilă (se va lega de API în Etapa 7)
-  function handleToggle(id) {
-    setMasini((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, disponibil: !m.disponibil } : m))
-    );
+  // Adăugare pe server (Etapa 7)
+  async function handleAdd(masinaNoua) {
+    const creat = await createMasina(masinaNoua);
+    setMasini((prev) => [...prev, creat]);
   }
 
-  function handleDelete(id) {
-    setMasini((prev) => prev.filter((m) => m.id !== id));
+  // Modificare pe server - bifare (Etapa 7)
+  async function handleToggle(id) {
+    const masina = masini.find((m) => m.id === id);
+    try {
+      const actualizat = await updateMasina(id, { disponibil: !masina.disponibil });
+      setMasini((prev) =>
+        prev.map((m) => (m.id === id ? actualizat : m))
+      );
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  // Ștergere pe server (Etapa 7)
+  async function handleDelete(id) {
+    try {
+      await deleteMasina(id);
+      setMasini((prev) => prev.filter((m) => m.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   // Comutare temă
@@ -92,6 +111,13 @@ export default function App() {
       </header>
 
       <main className="container">
+        {/* Panoul din stânga: Formularul de adăugare */}
+        <section className="panel">
+          <h2>Adaugă vehicul</h2>
+          <MasinaForm onAdd={handleAdd} />
+        </section>
+
+        {/* Panoul din dreapta: Lista de mașini */}
         <section className="panel">
           <h2>Vehicule în flotă</h2>
 
