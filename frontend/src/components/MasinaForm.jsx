@@ -1,86 +1,88 @@
 import { useState } from "react";
-
-const SEGMENTE = [
-  { value: "economic", label: "Economic" },
-  { value: "suv", label: "SUV" },
-  { value: "premium", label: "Premium" },
-];
-
-const MODEL_MAX = 100;
+import { SEGMENTE } from "../constants.js";
+import styles from "./MasinaForm.module.css";
 
 export default function MasinaForm({ onAdd }) {
   const [model, setModel] = useState("");
-  const [segment, setSegment] = useState("economic");
+  const [segment, setSegment] = useState(SEGMENTE[0].value);
   const [eroare, setEroare] = useState("");
-  const [trimite, setTrimite] = useState(false);
-
-  function valideaza() {
-    const m = model.trim();
-    if (m === "") return "Modelul este obligatoriu.";
-    if (m.length > MODEL_MAX) return `Modelul are maximum ${MODEL_MAX} de caractere.`;
-    return "";
-  }
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const mesaj = valideaza();
-    if (mesaj) {
-      setEroare(mesaj);
+    
+    if (model.trim().length < 2) {
+      setEroare("Modelul trebuie să aibă minim 2 caractere.");
       return;
     }
 
     setEroare("");
-    setTrimite(true);
+    setIsSubmitting(true);
 
     try {
-      await onAdd({ model: model.trim(), segment, disponibil: true });
+      await onAdd({
+        model: model.trim(),
+        segment,
+        disponibil: true,
+      });
+      
       setModel("");
-      setSegment("economic");
+      setSegment(SEGMENTE[0].value);
     } catch (err) {
       setEroare(err.message);
     } finally {
-      setTrimite(false);
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <form className="task-form" onSubmit={handleSubmit} noValidate data-testid="form">
-      <label>
-        Model
+    <form onSubmit={handleSubmit} className={styles.form} data-testid="form">
+      <div className={styles.field}>
+        <label htmlFor="model" className={styles.label}>
+          Model vehicul
+        </label>
         <input
+          id="model"
           type="text"
           value={model}
           onChange={(e) => setModel(e.target.value)}
-          placeholder="Ex: Dacia Duster"
-          maxLength={MODEL_MAX}
-          aria-invalid={Boolean(eroare)}
-          data-testid="form-title"
+          className={styles.input}
+          data-testid="form-model"
+          placeholder="ex: Peugeot 508"
         />
-      </label>
+        {eroare && (
+          <span className={styles.error} data-testid="form-error">
+            {eroare}
+          </span>
+        )}
+      </div>
 
-      <label>
-        Segment
+      <div className={styles.field}>
+        <label htmlFor="segment" className={styles.label}>
+          Segment
+        </label>
         <select
+          id="segment"
           value={segment}
           onChange={(e) => setSegment(e.target.value)}
+          className={styles.select}
           data-testid="form-segment"
         >
-          {SEGMENTE.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
+          {SEGMENTE.map((seg) => (
+            <option key={seg.value} value={seg.value}>
+              {seg.label}
             </option>
           ))}
         </select>
-      </label>
+      </div>
 
-      {eroare && (
-        <p className="error" data-testid="form-error">
-          {eroare}
-        </p>
-      )}
-
-      <button type="submit" disabled={trimite} data-testid="form-submit">
-        {trimite ? "Se salvează..." : "Adaugă"}
+      <button 
+        type="submit" 
+        className={`btn-primary ${styles.submit}`} 
+        disabled={isSubmitting}
+        data-testid="form-submit"
+      >
+        {isSubmitting ? "Se adaugă..." : "Adaugă vehicul"}
       </button>
     </form>
   );

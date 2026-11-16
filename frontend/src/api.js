@@ -20,6 +20,11 @@ export function fetchMasini() {
   return request("/masini");
 }
 
+// Aceasta este funcția care lipsea pentru pagina de detalii
+export function fetchMasina(id) {
+  return request(`/masini/${id}`);
+}
+
 export function createMasina(masina) {
   return request("/masini", {
     method: "POST",

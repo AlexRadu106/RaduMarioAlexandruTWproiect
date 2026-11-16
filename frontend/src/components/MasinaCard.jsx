@@ -1,40 +1,39 @@
-const ETICHETE_SEGMENT = {
-  economic: "Economic",
-  suv: "SUV",
-  premium: "Premium"
-};
+import { Link } from "react-router-dom";
+import { ETICHETE_SEGMENT } from "../constants.js";
+import styles from "./MasinaCard.module.css";
 
 export default function MasinaCard({ masina, onToggle, onDelete }) {
-  const esteInchiriat = !masina.disponibil;
-
   return (
-    <li className={esteInchiriat ? "item-card done" : "item-card"}>
-      <label className="item-main">
+    <li
+      className={!masina.disponibil ? `${styles.card} ${styles.done}` : styles.card}
+      data-testid="item"
+      data-id={masina.id}
+    >
+      <div className={styles.main}>
         <input
           type="checkbox"
-          checked={esteInchiriat}
+          checked={!masina.disponibil}
           onChange={() => onToggle(masina.id)}
+          aria-label={`Marchează ${masina.model}`}
+          data-testid="item-toggle"
         />
         <div>
-          <h3>{masina.model}</h3>
+          <Link to={`/masini/${masina.id}`} className={styles.title} data-testid="item-link">
+            {masina.model}
+          </Link>
           <span className={`badge badge-${masina.segment}`}>
             {ETICHETE_SEGMENT[masina.segment]}
           </span>
         </div>
-      </label>
-
-      <div className="item-actions">
-        <span className="status">
-          {masina.disponibil ? "Disponibil" : "Închiriat"}
-        </span>
-        <button
-          className="btn-danger"
-          onClick={() => onDelete(masina.id)}
-          aria-label={`Șterge ${masina.model}`}
-        >
-          Șterge
-        </button>
       </div>
+      <button
+        className="btn-danger"
+        onClick={() => onDelete(masina.id)}
+        aria-label={`Șterge ${masina.model}`}
+        data-testid="item-delete"
+      >
+        Șterge
+      </button>
     </li>
   );
 }

@@ -1,0 +1,149 @@
+:root {
+  --accent: #2563eb;
+  --accent-dark: #1d4ed8;
+  --accent-soft: #eff6ff;
+  --border: #e5e7eb;
+  /* Fundalul general mai gri pentru a scoate în evidență panourile albe */
+  --bg: #f3f4f6; 
+  --panel-bg: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --danger: #ef4444;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] {
+  --accent: #3b82f6;
+  --accent-dark: #60a5fa;
+  --accent-soft: #1e3a8a;
+  --border: #374151;
+  --bg: #111827;
+  --panel-bg: #1f2937;
+  --text: #f9fafb;
+  --muted: #9ca3af;
+  --danger: #f87171;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Layout Principal --- */
+.container {
+  max-width: 1000px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+/* Panouri (Secțiunile din stânga și dreapta) */
+.panel {
+  background-color: var(--panel-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: background-color 0.3s ease;
+}
+
+.panel h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.25rem;
+  border-bottom: 2px solid var(--accent-soft);
+  padding-bottom: 10px;
+}
+
+/* --- Header-ul tău din App.jsx --- */
+.app-header {
+  background-color: var(--panel-bg);
+  box-shadow: var(--shadow);
+  padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  border-bottom: 4px solid var(--accent);
+}
+
+.app-header h1 {
+  margin: 0 0 8px 0;
+  color: var(--accent);
+}
+
+.app-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.header-banner {
+  max-width: 100%;
+  width: 800px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin-top: 10px;
+}
+
+/* --- Butoane și Etichete --- */
+.theme-toggle {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  background-color: var(--accent);
+  color: white;
+}
+
+.btn-primary, .btn-danger {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-primary { background-color: var(--accent); color: white; }
+.btn-danger { background-color: var(--danger); color: white; }
+.btn-primary:active, .btn-danger:active { transform: scale(0.96); }
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  background: var(--accent-soft);
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}

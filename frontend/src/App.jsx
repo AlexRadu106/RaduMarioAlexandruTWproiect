@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
 import MasinaList from "./components/MasinaList.jsx";
 import MasinaForm from "./components/MasinaForm.jsx";
 import { fetchMasini, createMasina, updateMasina, deleteMasina } from "./api.js";
+
+import Layout from "./components/Layout.jsx";
+import MasinaDetaliuPage from "./pages/MasinaDetaliuPage.jsx";
+import DesprePage from "./pages/DesprePage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 // Tema de pornire: detectată din setarea sistemului de operare
 function temaInitiala() {
@@ -78,6 +84,11 @@ export default function App() {
     document.documentElement.dataset.theme = noua;
   }
 
+  // Setăm tema efectiv pe document
+  useEffect(() => {
+    document.documentElement.dataset.theme = tema;
+  }, [tema]);
+
   // Valoare derivată
   const disponibile = masini.filter((m) => m.disponibil).length;
 
@@ -111,32 +122,44 @@ export default function App() {
       </header>
 
       <main className="container">
-        {/* Panoul din stânga: Formularul de adăugare */}
-        <section className="panel">
-          <h2>Adaugă vehicul</h2>
-          <MasinaForm onAdd={handleAdd} />
-        </section>
+        {/* Aici au intrat rutele din Etapa 8 în locul secțiunilor hardcodate */}
+        <Routes>
+          <Route element={<Layout />}>
+            <Route 
+              path="/" 
+              element={
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "24px", alignItems: "start" }}>
+                  {/* Panoul din stânga: Formularul de adăugare */}
+                  <section className="panel">
+                    <h2>Adaugă vehicul</h2>
+                    <MasinaForm onAdd={handleAdd} />
+                  </section>
 
-        {/* Panoul din dreapta: Lista de mașini */}
-        <section className="panel">
-          <h2>Vehicule în flotă</h2>
-
-          {loading && <p className="info">Se încarcă...</p>}
-          
-          {error && (
-            <p className="error">
-              Nu am putut încărca datele: {error}. Rulează <code>npm run api</code>?
-            </p>
-          )}
-
-          {!loading && !error && (
-            <MasinaList
-              masini={masini}
-              onToggle={handleToggle}
-              onDelete={handleDelete}
+                  {/* Panoul din dreapta: Lista de mașini */}
+                  <section className="panel">
+                    <h2>Vehicule în flotă</h2>
+                    {loading && <p className="info">Se încarcă...</p>}
+                    {error && (
+                      <p className="error">
+                        Nu am putut încărca datele: {error}. Rulează <code>npm run api</code>?
+                      </p>
+                    )}
+                    {!loading && !error && (
+                      <MasinaList
+                        masini={masini}
+                        onToggle={handleToggle}
+                        onDelete={handleDelete}
+                      />
+                    )}
+                  </section>
+                </div>
+              } 
             />
-          )}
-        </section>
+            <Route path="/masini/:id" element={<MasinaDetaliuPage />} />
+            <Route path="/despre" element={<DesprePage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
       </main>
 
       <footer className="app-footer">Proiect Tehnologii Web</footer>
