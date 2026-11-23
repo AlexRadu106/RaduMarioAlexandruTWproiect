@@ -9,8 +9,9 @@ async function request(path, options = {}) {
     },
   });
 
-  if (!res.ok) {
-    throw new Error(`Eroare server: ${res.status}`);
+ if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Eroare server: ${res.status}`);
   }
 
   return res.status === 204 ? null : res.json();
@@ -20,7 +21,6 @@ export function fetchMasini() {
   return request("/masini");
 }
 
-// Aceasta este funcția care lipsea pentru pagina de detalii
 export function fetchMasina(id) {
   return request(`/masini/${id}`);
 }
