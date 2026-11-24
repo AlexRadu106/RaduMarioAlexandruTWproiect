@@ -67,6 +67,118 @@ let masini = [
   { id: 50, model: "Peugeot Traveller 2.0 BlueHDi", segment: "van", disponibil: false, an: 2022, combustibil: "Diesel", transmisie: "Automată", putere: 177, km: 52400, pretZi: 92, nrInmatriculare: "B-719-FLT", zileRamase: 6, judet: "Dolj" },
 ];
 let nextId = 51;
+let nextContractSeq = 1001;
+
+function formatDateRo(d) {
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+
+function shiftDays(base, days) {
+  return new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
+}
+
+function calcTotalContract(pretZi, zile) {
+  const subtotal = (Number(pretZi) || 45) * zile;
+  const areReducere = zile >= 7;
+  const total = areReducere ? Math.round(subtotal * 0.9) : subtotal;
+  return { total, areReducere };
+}
+
+function genereazaNrContract(masinaId, dateObj = new Date()) {
+  const seq = String(nextContractSeq++).slice(-4);
+  return `FM-${dateObj.getFullYear()}-${String(masinaId).padStart(3, "0")}-${seq}`;
+}
+
+const DEMO_CLIENTI_ACTIVI = [
+  { numeClient: "Popescu Andrei", ciClient: "RX 482910", telefon: "0722 410 321" },
+  { numeClient: "Ionescu Maria", ciClient: "SB 319402", telefon: "0744 892 115" },
+  { numeClient: "Dumitrescu Vlad", ciClient: "PH 771204", telefon: "0731 554 098" },
+  { numeClient: "Stan Elena", ciClient: "CJ 615830", telefon: "0755 209 441" },
+  { numeClient: "Georgescu Mihai", ciClient: "BH 294118", telefon: "0726 731 809" },
+  { numeClient: "Radu Cristian", ciClient: "SV 882190", telefon: "0740 612 330" },
+  { numeClient: "Marinescu Ioana", ciClient: "CT 540219", telefon: "0723 940 512" },
+  { numeClient: "Tudor Alexandru", ciClient: "CL 198432", telefon: "0766 318 227" },
+  { numeClient: "Moldovan Ana", ciClient: "MS 704512", telefon: "0745 119 884" },
+  { numeClient: "Stoica Daniel", ciClient: "TM 931045", telefon: "0721 680 419" },
+  { numeClient: "Dobre Raluca", ciClient: "RD 445190", telefon: "0733 502 764" },
+  { numeClient: "Nistor Gabriel", ciClient: "CJ 812094", telefon: "0748 223 910" },
+  { numeClient: "Lungu Ștefan", ciClient: "IS 663218", telefon: "0752 401 673" },
+  { numeClient: "Munteanu Bianca", ciClient: "DJ 309841", telefon: "0729 845 102" },
+];
+
+const DEMO_FINALIZATE = [
+  { masinaId: 1, numeClient: "Vasile Bogdan", ciClient: "RK 219405", telefon: "0724 311 209", judet: "Ilfov", zile: 5, daysAgoEnd: 4 },
+  { masinaId: 3, numeClient: "Enache Laura", ciClient: "BV 510923", telefon: "0742 608 119", judet: "Brașov", zile: 8, daysAgoEnd: 7 },
+  { masinaId: 5, numeClient: "Matei Florin", ciClient: "AG 390112", telefon: "0735 901 442", judet: "Argeș", zile: 4, daysAgoEnd: 10 },
+  { masinaId: 12, numeClient: "Drăgan Sorin", ciClient: "B 802341", telefon: "0728 514 990", judet: "București", zile: 7, daysAgoEnd: 5 },
+  { masinaId: 16, numeClient: "Ciobanu Rareș", ciClient: "CJ 478920", telefon: "0749 332 715", judet: "Cluj", zile: 3, daysAgoEnd: 12 },
+  { masinaId: 17, numeClient: "Preda Teodora", ciClient: "TM 619044", telefon: "0751 874 203", judet: "Timiș", zile: 10, daysAgoEnd: 6 },
+];
+
+function initializeazaContracteDemo() {
+  const azi = new Date();
+  let activeIdx = 0;
+
+  masini = masini.map((m) => {
+    const contracte = [];
+
+    if (!m.disponibil) {
+      const client = DEMO_CLIENTI_ACTIVI[activeIdx % DEMO_CLIENTI_ACTIVI.length];
+      activeIdx++;
+      const zile = m.zileRamase || 3;
+      const startDate = shiftDays(azi, -1);
+      const returDate = shiftDays(azi, zile);
+      const { total, areReducere } = calcTotalContract(m.pretZi, zile);
+
+      contracte.push({
+        id: `c-${m.id}-${nextContractSeq}`,
+        nrContract: genereazaNrContract(m.id, startDate),
+        numeClient: client.numeClient,
+        ciClient: client.ciClient,
+        telefon: client.telefon,
+        judet: m.judet || "București",
+        zile,
+        total,
+        areReducere,
+        dataStart: formatDateRo(startDate),
+        dataRetur: formatDateRo(returDate),
+        status: "activ",
+        createdAt: startDate.toISOString(),
+      });
+    }
+
+    const pastItems = DEMO_FINALIZATE.filter((item) => item.masinaId === m.id);
+    pastItems.forEach((item) => {
+      const endDate = shiftDays(azi, -item.daysAgoEnd);
+      const startDate = shiftDays(endDate, -item.zile);
+      const { total, areReducere } = calcTotalContract(m.pretZi, item.zile);
+
+      contracte.push({
+        id: `c-${m.id}-${nextContractSeq}`,
+        nrContract: genereazaNrContract(m.id, startDate),
+        numeClient: item.numeClient,
+        ciClient: item.ciClient,
+        telefon: item.telefon,
+        judet: item.judet,
+        zile: item.zile,
+        total,
+        areReducere,
+        dataStart: formatDateRo(startDate),
+        dataRetur: formatDateRo(endDate),
+        dataReturnare: formatDateRo(endDate),
+        status: "finalizat",
+        createdAt: startDate.toISOString(),
+      });
+    });
+
+    return { ...m, contracte };
+  });
+}
+
+initializeazaContracteDemo();
 
 function gasesteIndex(req, res) {
   const id = parseId(req.params.id);
@@ -100,7 +212,8 @@ router.post("/", (req, res) => {
     return res.status(400).json({ error: erori.join("; ") });
   }
 
-  const masina = { id: nextId++, ...date };
+  delete date.contract;
+  const masina = { id: nextId++, ...date, contracte: [] };
   masini.push(masina);
   res.status(201).json(masina);
 });
@@ -114,15 +227,59 @@ router.patch("/:id", (req, res) => {
     return res.status(400).json({ error: erori.join("; ") });
   }
 
+  const contractNou = date.contract;
+  delete date.contract;
+
+  const curent = masini[index];
+  let contracteActualizate = Array.isArray(curent.contracte)
+    ? [...curent.contracte]
+    : [];
+
   if (date.disponibil === true) {
     if (date.zileRamase === undefined) date.zileRamase = 0;
     if (date.judet === undefined) date.judet = "";
+
+    const dataReturnare = formatDateRo(new Date());
+    contracteActualizate = contracteActualizate.map((c) =>
+      c.status === "activ" ? { ...c, status: "finalizat", dataReturnare } : c
+    );
   } else if (date.disponibil === false) {
-    if (date.zileRamase === undefined) date.zileRamase = masini[index].zileRamase || 3;
-    if (date.judet === undefined) date.judet = masini[index].judet || "București";
+    if (date.zileRamase === undefined) date.zileRamase = curent.zileRamase || 3;
+    if (date.judet === undefined) date.judet = curent.judet || "București";
+
+    const azi = new Date();
+    const dataReturnare = formatDateRo(azi);
+    contracteActualizate = contracteActualizate.map((c) =>
+      c.status === "activ" ? { ...c, status: "finalizat", dataReturnare } : c
+    );
+
+    const zile = contractNou?.zile ?? date.zileRamase;
+    const judet = contractNou?.judet ?? date.judet;
+    const { total: calcTotal, areReducere: calcRed } = calcTotalContract(
+      date.pretZi ?? curent.pretZi,
+      zile
+    );
+
+    const intrareNoua = {
+      id: `c-${curent.id}-${Date.now()}`,
+      nrContract: contractNou?.nrContract || genereazaNrContract(curent.id, azi),
+      numeClient: contractNou?.numeClient || "Închiriere rapidă (catalog)",
+      ciClient: contractNou?.ciClient || "",
+      telefon: contractNou?.telefon || "",
+      judet,
+      zile,
+      total: contractNou?.total ?? calcTotal,
+      areReducere: contractNou?.areReducere ?? calcRed,
+      dataStart: contractNou?.dataStart || formatDateRo(azi),
+      dataRetur: contractNou?.dataRetur || formatDateRo(shiftDays(azi, zile)),
+      status: "activ",
+      createdAt: azi.toISOString(),
+    };
+
+    contracteActualizate = [intrareNoua, ...contracteActualizate];
   }
 
-  masini[index] = { ...masini[index], ...date };
+  masini[index] = { ...curent, ...date, contracte: contracteActualizate };
   res.json(masini[index]);
 });
 

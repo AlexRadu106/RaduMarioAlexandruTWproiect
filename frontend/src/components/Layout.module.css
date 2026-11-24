@@ -1,6 +1,7 @@
 .navBar {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 24px;
   padding: 12px;

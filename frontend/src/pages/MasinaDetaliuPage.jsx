@@ -21,6 +21,7 @@ export default function MasinaDetaliuPage({ onUpdate }) {
   const [judet, setJudet] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [actionError, setActionError] = useState("");
   const [showContract, setShowContract] = useState(false);
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function MasinaDetaliuPage({ onUpdate }) {
     setLoading(true);
     setError("");
     setFeedback("");
+    setActionError("");
 
     fetchMasina(id)
       .then((data) => {
@@ -48,25 +50,33 @@ export default function MasinaDetaliuPage({ onUpdate }) {
     };
   }, [id]);
 
-  async function handleInchiriere() {
-    if (!judet) return;
+  async function handleInchiriere(contractData) {
+    if (!judet) return false;
     setSubmitting(true);
     setFeedback("");
+    setActionError("");
     try {
-      const actualizat = await updateMasina(masina.id, {
+      const payload = {
         disponibil: false,
         zileRamase: zile,
         judet,
-      });
+      };
+      if (contractData) {
+        payload.contract = contractData;
+      }
+      const actualizat = await updateMasina(masina.id, payload);
       setMasina(actualizat);
       onUpdate?.(actualizat);
+      setShowContract(false);
       setFeedback(
         `Vehiculul a fost închiriat pentru ${zile} ${
           zile === 1 ? "zi" : "zile"
         } în județul ${judet}!`
       );
+      return true;
     } catch (err) {
-      setError(err.message || "Nu am putut procesa închirierea.");
+      setActionError(err.message || "Nu am putut procesa închirierea.");
+      return false;
     } finally {
       setSubmitting(false);
     }
@@ -75,6 +85,7 @@ export default function MasinaDetaliuPage({ onUpdate }) {
   async function handleReturnare() {
     setSubmitting(true);
     setFeedback("");
+    setActionError("");
     try {
       const actualizat = await updateMasina(masina.id, {
         disponibil: true,
@@ -86,7 +97,7 @@ export default function MasinaDetaliuPage({ onUpdate }) {
       onUpdate?.(actualizat);
       setFeedback("Vehiculul a fost marcat ca disponibil în flotă.");
     } catch (err) {
-      setError(err.message || "Nu am putut actualiza statusul.");
+      setActionError(err.message || "Nu am putut actualiza statusul.");
     } finally {
       setSubmitting(false);
     }
@@ -109,6 +120,7 @@ export default function MasinaDetaliuPage({ onUpdate }) {
   const subtotal = pretZi * zile;
   const areReducere = zile >= 7;
   const total = areReducere ? Math.round(subtotal * 0.9) : subtotal;
+  const contracte = Array.isArray(masina.contracte) ? masina.contracte : [];
 
   return (
     <div className={styles.wrapper}>
@@ -256,6 +268,8 @@ export default function MasinaDetaliuPage({ onUpdate }) {
             </div>
           </div>
 
+          {actionError && <p className="error">{actionError}</p>}
+
           {feedback && (
             <p style={{ color: "#10b981", fontWeight: 600, margin: "4px 0 0" }}>
               {feedback}
@@ -276,7 +290,6 @@ export default function MasinaDetaliuPage({ onUpdate }) {
                 : `Generează contract & Închiriază (${total} €)`}
             </button>
           ) : (
-
             <button
               type="button"
               className="btn-danger"
@@ -288,6 +301,89 @@ export default function MasinaDetaliuPage({ onUpdate }) {
           )}
         </div>
       </div>
+
+      <section className="panel" aria-label="Istoric contracte vehicul">
+        <div className={styles.historyHeader}>
+          <h2>Istoric contracte ({contracte.length})</h2>
+          <Link to="/contracte" className={styles.allContractsLink}>
+            Vezi toate contractele din flotă →
+          </Link>
+        </div>
+
+        {contracte.length === 0 ? (
+          <p className="info">
+            Acest vehicul nu are încă contracte înregistrate.
+          </p>
+        ) : (
+          <ul className={styles.historyList}>
+            {contracte.map((c) => {
+              const isActiv = c.status === "activ";
+              return (
+                <li
+                  key={c.id || c.nrContract}
+                  className={`${styles.contractItem} ${
+                    isActiv ? styles.contractItemActive : ""
+                  }`}
+                >
+                  <div className={styles.contractTop}>
+                    <div className={styles.contractIdentity}>
+                      <span className={styles.contractCode}>
+                        {c.nrContract || "FM-CONTRACT"}
+                      </span>
+                      <span
+                        className={`${styles.contractStatus} ${
+                          isActiv ? styles.statusActiv : styles.statusFinalizat
+                        }`}
+                      >
+                        {isActiv ? "● Activ" : "✓ Finalizat"}
+                      </span>
+                    </div>
+
+                    <div className={styles.contractTotal}>
+                      {c.areReducere && (
+                        <span className={styles.discountTag}>-10%</span>
+                      )}
+                      <strong>{c.total ?? 0} €</strong>
+                    </div>
+                  </div>
+
+                  <div className={styles.contractMeta}>
+                    <span>
+                      Client: <strong>{c.numeClient || "Nespecificat"}</strong>
+                    </span>
+                    <span>
+                      Destinație: <strong>{c.judet || "—"}</strong>
+                    </span>
+                    <span>
+                      Perioadă:{" "}
+                      <strong>
+                        {c.dataStart || "—"} – {c.dataRetur || "—"} (
+                        {c.zile || 1} {(c.zile || 1) === 1 ? "zi" : "zile"})
+                      </strong>
+                    </span>
+                    {c.telefon && (
+                      <span>
+                        Telefon: <strong>{c.telefon}</strong>
+                      </span>
+                    )}
+                    {c.ciClient && (
+                      <span>
+                        CI / Pașaport: <strong>{c.ciClient}</strong>
+                      </span>
+                    )}
+                    {!isActiv && c.dataReturnare && (
+                      <span>
+                        Returnat la: <strong>{c.dataReturnare}</strong>
+                      </span>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
       {showContract && (
         <ContractModal
           masina={masina}

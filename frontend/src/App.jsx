@@ -10,6 +10,7 @@ import DesprePage from "./pages/DesprePage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import HartaPage from "./pages/HartaPage.jsx";
 import SmartFinderPage from "./pages/SmartFinderPage.jsx";
+import ContractePage from "./pages/ContractePage.jsx";
 
 function temaInitiala() {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -179,6 +180,7 @@ export default function App() {
             />
             <Route path="/despre" element={<DesprePage />} />
             <Route path="/harta" element={<HartaPage masini={masini} />} />
+            <Route path="/contracte" element={<ContractePage masini={masini} />} />
             <Route path="/finder" element={<SmartFinderPage masini={masini} />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>

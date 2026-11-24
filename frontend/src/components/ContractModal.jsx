@@ -86,17 +86,8 @@ export default function ContractModal({
     setHasSigned(false);
   }
 
-  function genereazaPDF() {
+  function genereazaPDF({ nrContract, dataStart, dataRetur }) {
     const doc = new jsPDF({ unit: "mm", format: "a4" });
-    const azi = new Date();
-    const dataFormatata = azi.toLocaleDateString("ro-RO");
-    const dataRetur = new Date(
-      azi.getTime() + zile * 24 * 60 * 60 * 1000
-    ).toLocaleDateString("ro-RO");
-    const nrContract = `FM-${azi.getFullYear()}-${String(masina.id).padStart(
-      3,
-      "0"
-    )}-${String(azi.getTime()).slice(-4)}`;
 
     // Header colorat
     doc.setFillColor(15, 23, 42);
@@ -113,7 +104,7 @@ export default function ContractModal({
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9.5);
     doc.text(`Nr. contract: ${nrContract}`, 194, 15, { align: "right" });
-    doc.text(`Data emiterii: ${dataFormatata}`, 194, 22, { align: "right" });
+    doc.text(`Data emiterii: ${dataStart}`, 194, 22, { align: "right" });
 
     // 1. Date Client
     let y = 46;
@@ -184,7 +175,7 @@ export default function ContractModal({
     y += 9;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(`Perioada: ${dataFormatata} - ${dataRetur} (${zile} ${zile === 1 ? "zi" : "zile"})`, 16, y);
+    doc.text(`Perioada: ${dataStart} - ${dataRetur} (${zile} ${zile === 1 ? "zi" : "zile"})`, 16, y);
     y += 7;
     doc.text(
       `Tarif de baza: ${zile} x ${masina.pretZi ?? 45} EUR = ${subtotal} EUR`,
@@ -250,14 +241,40 @@ export default function ContractModal({
       /\s+/g,
       "_"
     );
-    doc.save(`Contract_${filePlate}_${dataFormatata.replace(/\./g, "-")}.pdf`);
+    doc.save(`Contract_${filePlate}_${dataStart.replace(/\./g, "-")}.pdf`);
   }
 
   async function handleConfirmAndDownload(e) {
     e.preventDefault();
-    if (!numeClient.trim() || !hasSigned) return;
-    genereazaPDF();
-    await onConfirm();
+    if (numeClient.trim().length < 3 || !hasSigned || submitting) return;
+
+    const azi = new Date();
+    const dataStart = azi.toLocaleDateString("ro-RO");
+    const dataRetur = new Date(
+      azi.getTime() + zile * 24 * 60 * 60 * 1000
+    ).toLocaleDateString("ro-RO");
+    const nrContract = `FM-${azi.getFullYear()}-${String(masina.id).padStart(
+      3,
+      "0"
+    )}-${String(azi.getTime()).slice(-4)}`;
+
+    const contractData = {
+      nrContract,
+      numeClient: numeClient.trim(),
+      ciClient: ciClient.trim(),
+      telefon: telefon.trim(),
+      dataStart,
+      dataRetur,
+      zile,
+      judet,
+      total,
+      areReducere,
+    };
+
+    const confirmed = await onConfirm(contractData);
+    if (confirmed !== false) {
+      genereazaPDF(contractData);
+    }
   }
 
   const canSubmit = numeClient.trim().length >= 3 && hasSigned && !submitting;

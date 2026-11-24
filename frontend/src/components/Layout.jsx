@@ -15,11 +15,14 @@ export default function Layout() {
         <NavLink to="/harta" className={navClass}>
           Hartă Flotă
         </NavLink>
-        <NavLink to="/despre" className={navClass}>
-          Despre Proiect
+        <NavLink to="/contracte" className={navClass}>
+          Contracte
         </NavLink>
         <NavLink to="/finder" className={navClass}>
           Smart Finder
+        </NavLink>
+        <NavLink to="/despre" className={navClass}>
+          Despre Proiect
         </NavLink>
       </nav>
 

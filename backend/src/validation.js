@@ -131,6 +131,56 @@ export function valideazaMasina(body, { partial = false } = {}) {
   } else if (!partial) {
     date.judet = date.disponibil === false ? "București" : "";
   }
+
+  if (body.contract !== undefined) {
+    const c = body.contract;
+    if (typeof c !== "object" || c === null || Array.isArray(c)) {
+      erori.push("contract trebuie să fie un obiect valid");
+    } else {
+      const numeClient = typeof c.numeClient === "string" ? c.numeClient.trim() : "";
+      if (numeClient.length < 2 || numeClient.length > 100) {
+        erori.push("numeClient din contract trebuie să aibă între 2 și 100 de caractere");
+      } else {
+        const contractValid = { numeClient };
+
+        if (typeof c.nrContract === "string" && c.nrContract.trim().length > 0) {
+          contractValid.nrContract = c.nrContract.trim().slice(0, 40);
+        }
+        if (typeof c.ciClient === "string") {
+          contractValid.ciClient = c.ciClient.trim().slice(0, 30);
+        }
+        if (typeof c.telefon === "string") {
+          contractValid.telefon = c.telefon.trim().slice(0, 30);
+        }
+        if (typeof c.dataStart === "string" && c.dataStart.trim().length > 0) {
+          contractValid.dataStart = c.dataStart.trim().slice(0, 25);
+        }
+        if (typeof c.dataRetur === "string" && c.dataRetur.trim().length > 0) {
+          contractValid.dataRetur = c.dataRetur.trim().slice(0, 25);
+        }
+        if (c.zile !== undefined) {
+          const z = Number(c.zile);
+          if (Number.isInteger(z) && z >= 1 && z <= 365) {
+            contractValid.zile = z;
+          }
+        }
+        if (typeof c.judet === "string" && c.judet.trim().length > 0) {
+          contractValid.judet = c.judet.trim().slice(0, 50);
+        }
+        if (c.total !== undefined) {
+          const t = Number(c.total);
+          if (!Number.isNaN(t) && t > 0) {
+            contractValid.total = Math.round(t);
+          }
+        }
+        if (typeof c.areReducere === "boolean") {
+          contractValid.areReducere = c.areReducere;
+        }
+
+        date.contract = contractValid;
+      }
+    }
+  }
   
   return { erori, date };
 }
