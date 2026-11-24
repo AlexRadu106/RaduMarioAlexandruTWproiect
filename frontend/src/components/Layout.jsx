@@ -12,8 +12,14 @@ export default function Layout() {
         <NavLink to="/" end className={navClass}>
           Lista Vehiculelor
         </NavLink>
+        <NavLink to="/harta" className={navClass}>
+          Hartă Flotă
+        </NavLink>
         <NavLink to="/despre" className={navClass}>
           Despre Proiect
+        </NavLink>
+        <NavLink to="/finder" className={navClass}>
+          Smart Finder
         </NavLink>
       </nav>
 

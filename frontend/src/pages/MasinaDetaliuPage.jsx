@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchMasina, updateMasina } from "../api";
+import {
+  CalendarIcon,
+  FuelIcon,
+  GearboxIcon,
+  BoltIcon,
+  GaugeIcon,
+} from "../components/SpecIcons";
+import { JUDETE_ROMANIA } from "../data/judete";
 import styles from "./MasinaDetaliuPage.module.css";
+import ContractModal from "../components/ContractModal";
 
 export default function MasinaDetaliuPage({ onUpdate }) {
   const { id } = useParams();
@@ -9,8 +18,10 @@ export default function MasinaDetaliuPage({ onUpdate }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [zile, setZile] = useState(3);
+  const [judet, setJudet] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [showContract, setShowContract] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -20,7 +31,10 @@ export default function MasinaDetaliuPage({ onUpdate }) {
 
     fetchMasina(id)
       .then((data) => {
-        if (!ignore) setMasina(data);
+        if (!ignore) {
+          setMasina(data);
+          setJudet(data.judet || "");
+        }
       })
       .catch((err) => {
         if (!ignore) setError(err.message || "Mașina nu a putut fi încărcată.");
@@ -35,19 +49,21 @@ export default function MasinaDetaliuPage({ onUpdate }) {
   }, [id]);
 
   async function handleInchiriere() {
+    if (!judet) return;
     setSubmitting(true);
     setFeedback("");
     try {
       const actualizat = await updateMasina(masina.id, {
         disponibil: false,
         zileRamase: zile,
+        judet,
       });
       setMasina(actualizat);
       onUpdate?.(actualizat);
       setFeedback(
-        `Vehiculul a fost închiriat cu succes pentru ${zile} ${
+        `Vehiculul a fost închiriat pentru ${zile} ${
           zile === 1 ? "zi" : "zile"
-        }!`
+        } în județul ${judet}!`
       );
     } catch (err) {
       setError(err.message || "Nu am putut procesa închirierea.");
@@ -63,8 +79,10 @@ export default function MasinaDetaliuPage({ onUpdate }) {
       const actualizat = await updateMasina(masina.id, {
         disponibil: true,
         zileRamase: 0,
+        judet: "",
       });
       setMasina(actualizat);
+      setJudet("");
       onUpdate?.(actualizat);
       setFeedback("Vehiculul a fost marcat ca disponibil în flotă.");
     } catch (err) {
@@ -113,9 +131,9 @@ export default function MasinaDetaliuPage({ onUpdate }) {
               >
                 {masina.disponibil
                   ? "● Disponibil"
-                  : `● Închiriat (revine în ${masina.zileRamase || 1} ${
-                      (masina.zileRamase || 1) === 1 ? "zi" : "zile"
-                    })`}
+                  : `● Închiriat${masina.judet ? ` • ${masina.judet}` : ""} (revine în ${
+                      masina.zileRamase || 1
+                    } ${(masina.zileRamase || 1) === 1 ? "zi" : "zile"})`}
               </span>
               {masina.nrInmatriculare && (
                 <span className={styles.plate}>{masina.nrInmatriculare}</span>
@@ -131,23 +149,33 @@ export default function MasinaDetaliuPage({ onUpdate }) {
 
         <div className={styles.specsGrid}>
           <div className={styles.specCard}>
-            <span className={styles.specLabel}>An fabricație</span>
+            <span className={styles.specLabel}>
+              <CalendarIcon /> An fabricație
+            </span>
             <strong>{masina.an ?? "—"}</strong>
           </div>
           <div className={styles.specCard}>
-            <span className={styles.specLabel}>Combustibil</span>
+            <span className={styles.specLabel}>
+              <FuelIcon /> Combustibil
+            </span>
             <strong>{masina.combustibil ?? "—"}</strong>
           </div>
           <div className={styles.specCard}>
-            <span className={styles.specLabel}>Transmisie</span>
+            <span className={styles.specLabel}>
+              <GearboxIcon /> Transmisie
+            </span>
             <strong>{masina.transmisie ?? "—"}</strong>
           </div>
           <div className={styles.specCard}>
-            <span className={styles.specLabel}>Putere motor</span>
+            <span className={styles.specLabel}>
+              <BoltIcon /> Putere motor
+            </span>
             <strong>{masina.putere ? `${masina.putere} CP` : "—"}</strong>
           </div>
           <div className={styles.specCard}>
-            <span className={styles.specLabel}>Kilometraj</span>
+            <span className={styles.specLabel}>
+              <GaugeIcon /> Kilometraj
+            </span>
             <strong>
               {masina.km !== undefined
                 ? `${masina.km.toLocaleString("ro-RO")} km`
@@ -180,6 +208,35 @@ export default function MasinaDetaliuPage({ onUpdate }) {
             className={styles.slider}
             disabled={!masina.disponibil || submitting}
           />
+
+          <label htmlFor="judet-select" style={{ marginTop: "6px" }}>
+            Județ destinație:
+          </label>
+          <select
+            id="judet-select"
+            value={judet}
+            onChange={(e) => setJudet(e.target.value)}
+            disabled={!masina.disponibil || submitting}
+            style={{
+              padding: "9px 12px",
+              borderRadius: "10px",
+              border: "1px solid var(--border)",
+              background: "var(--card-bg)",
+              color: "var(--text)",
+              fontSize: "0.92rem",
+              cursor: "pointer",
+            }}
+          >
+            <option value="" disabled>
+              — Alege județul destinație —
+            </option>
+            {JUDETE_ROMANIA.map((j) => (
+              <option key={j.nume} value={j.nume}>
+                {j.nume}
+              </option>
+            ))}
+          </select>
+
           <div className={styles.calcSummary}>
             <div>
               <span>
@@ -209,14 +266,17 @@ export default function MasinaDetaliuPage({ onUpdate }) {
             <button
               type="button"
               className="btn-primary"
-              onClick={handleInchiriere}
-              disabled={submitting}
+              onClick={() => setShowContract(true)}
+              disabled={submitting || !judet}
             >
               {submitting
                 ? "Se procesează..."
-                : `Închiriază pentru ${zile} ${zile === 1 ? "zi" : "zile"} (${total} €)`}
+                : !judet
+                ? "Selectează județul pentru a închiria"
+                : `Generează contract & Închiriază (${total} €)`}
             </button>
           ) : (
+
             <button
               type="button"
               className="btn-danger"
@@ -228,6 +288,19 @@ export default function MasinaDetaliuPage({ onUpdate }) {
           )}
         </div>
       </div>
+      {showContract && (
+        <ContractModal
+          masina={masina}
+          zile={zile}
+          judet={judet}
+          subtotal={subtotal}
+          total={total}
+          areReducere={areReducere}
+          submitting={submitting}
+          onClose={() => setShowContract(false)}
+          onConfirm={handleInchiriere}
+        />
+      )}
     </div>
   );
 }

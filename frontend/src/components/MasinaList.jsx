@@ -1,23 +1,28 @@
-import MasinaCard from "./MasinaCard.jsx";
+import MasinaCard from "./MasinaCard";
 import styles from "./MasinaList.module.css";
 
-export default function MasinaList({ masini, onToggle, onDelete }) {
+export default function MasinaList({
+  masini,
+  onToggle,
+  onDelete,
+  compareIds = [],
+  onToggleCompare,
+}) {
   if (masini.length === 0) {
-    return (
-      <p className={styles.empty} data-testid="empty">
-        Nu există vehicule în flotă.
-      </p>
-    );
+    return <p className="info">Nu există vehicule care să corespundă filtrelor.</p>;
   }
 
   return (
-    <ul className={styles.list} data-testid="list">
-      {masini.map((masina) => (
+    <ul className={styles.list}>
+      {masini.map((m) => (
         <MasinaCard
-          key={masina.id}
-          masina={masina}
+          key={m.id}
+          masina={m}
           onToggle={onToggle}
           onDelete={onDelete}
+          isCompared={compareIds.includes(m.id)}
+          onToggleCompare={onToggleCompare}
+          compareDisabled={compareIds.length >= 2}
         />
       ))}
     </ul>

@@ -118,3 +118,47 @@
   color: #f59e0b;
   border: 1px solid rgba(245, 158, 11, 0.4);
 }
+
+.specItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.specItem svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.compareBtn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.compareBtn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.compareBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.compareActive {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}

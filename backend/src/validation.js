@@ -122,6 +122,16 @@ export function valideazaMasina(body, { partial = false } = {}) {
     date.zileRamase = date.disponibil === false ? 3 : 0;
   }
 
+  if (body.judet !== undefined) {
+    if (typeof body.judet !== "string" || body.judet.trim().length > 50) {
+      erori.push("judet trebuie să fie un text valid (max 50 caractere)");
+    } else {
+      date.judet = body.judet.trim();
+    }
+  } else if (!partial) {
+    date.judet = date.disponibil === false ? "București" : "";
+  }
+  
   return { erori, date };
 }
 

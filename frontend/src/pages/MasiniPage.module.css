@@ -117,3 +117,124 @@
 .pageActive:hover:not(:disabled) {
   color: #0b1120;
 }
+
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.kpiCard {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.kpiLabel {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.kpiValue {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.kpiSub {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.kpiGreen .kpiValue {
+  color: #10b981;
+}
+
+.kpiAmber .kpiValue {
+  color: #f59e0b;
+}
+
+.kpiAccent .kpiValue {
+  color: var(--accent);
+}
+
+.availPill {
+  margin-left: auto;
+}
+
+.availPillActive {
+  background: rgba(16, 185, 129, 0.18);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+@media (max-width: 900px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.compareBar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--accent);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+  font-size: 0.9rem;
+}
+
+.compareActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clearCompareBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.clearCompareBtn:hover {
+  color: var(--text);
+  border-color: var(--text);
+}

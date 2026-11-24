@@ -1,0 +1,182 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.backLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.summary {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.mapPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mapHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mapHeader h2 {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.hoverBadge {
+  font-size: 0.88rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.hoverBadge strong {
+  color: var(--accent);
+}
+
+.romaniaSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.countyGroup {
+  cursor: pointer;
+}
+
+.countyPath {
+  fill: rgba(148, 163, 184, 0.12);
+  stroke: rgba(148, 163, 184, 0.45);
+  stroke-width: 1.2;
+  transition: fill 0.18s ease, stroke 0.18s ease, stroke-width 0.18s ease;
+}
+
+.countyHasCars .countyPath {
+  fill: rgba(14, 165, 233, 0.28);
+  stroke: rgba(56, 189, 248, 0.75);
+  stroke-width: 1.5;
+}
+
+.countyGroup:hover .countyPath {
+  fill: rgba(56, 189, 248, 0.48);
+  stroke: #38bdf8;
+  stroke-width: 2.4;
+}
+
+.countySelected .countyPath {
+  fill: rgba(56, 189, 248, 0.55);
+  stroke: #ffffff;
+  stroke-width: 2.6;
+}
+
+.pinGroup {
+  pointer-events: none;
+}
+
+.pinCircle {
+  fill: #0ea5e9;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.pinText {
+  fill: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: system-ui, sans-serif;
+}
+
+.judetList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.judetItem {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.judetItem:hover,
+.judetActive {
+  border-color: var(--accent);
+}
+
+.judetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.countPill {
+  background: var(--accent);
+  color: #0b1120;
+  font-weight: 800;
+  font-size: 0.78rem;
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.carsMini {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.carLink {
+  font-size: 0.83rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.carLink:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

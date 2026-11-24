@@ -1,0 +1,172 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.backLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-block;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.title {
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin: 0 0 10px 0 !important;
+  font-size: 1.55rem !important;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+.stackPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stackPills span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.cardsGrid h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.cardText {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.cardText code {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-size: 0.84rem;
+  color: var(--text);
+}
+
+.endpointsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.endpointRow {
+  display: grid;
+  grid-template-columns: 76px 150px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
+.method {
+  text-align: center;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+}
+
+.m_GET {
+  background: rgba(16, 185, 129, 0.16);
+  color: #10b981;
+}
+
+.m_POST {
+  background: rgba(59, 130, 246, 0.16);
+  color: #38bdf8;
+}
+
+.m_PATCH {
+  background: rgba(245, 158, 11, 0.16);
+  color: #f59e0b;
+}
+
+.m_DELETE {
+  background: rgba(239, 68, 68, 0.16);
+  color: #f87171;
+}
+
+.path {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .endpointRow {
+    grid-template-columns: 70px 1fr;
+  }
+
+  .desc {
+    grid-column: 1 / -1;
+  }
+}
+
+.specLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.specLabel svg {
+  color: var(--accent);
+}
